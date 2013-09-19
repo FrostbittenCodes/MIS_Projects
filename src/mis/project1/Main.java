@@ -21,7 +21,7 @@ public class Main {
         BufferedReader input1;
         BufferedReader input2;
         String f1, f2; //input files
-        String outputfile = "RGB.bmp"; //TODO: change default back to output.bmp
+        String outputfile = "YIQ.bmp"; //TODO: change default back to output.bmp
         double[][] data1 = new double[20][];
         double[][] data2 = new double[20][];
         double[][] diff = new double[20][];
@@ -222,12 +222,16 @@ public class Main {
                     case 0:
                         temp[(maxlength*j)+i] = getRGBColor(color1, color2, diff[j][i]);
                         break;
+                    case 1:
+                        temp[(maxlength*j)+i] = getYUVColor(c1a, c1b, c1c, c2a, c2b, c2c, diff[j][i]);
+                        break;
+                    case 2:
+                        temp[(maxlength*j)+i] = getYIQColor(c1a, c1b, c1c, c2a, c2b, c2c, diff[j][i]);
+                        break;
                     default:
                         System.err.println("Something broke when choosing color space");
                         return;
                 }
-                //getYIQColor(c1a, c1b, c1c, c2a, c2b, c2c, diff[j][i]);
-                //getYUVColor(c1a, c1b, c1c, c2a, c2b, c2c, diff[j][i]);
             }
         }
         
