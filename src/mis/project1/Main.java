@@ -2,6 +2,7 @@
 //Quick and dirty java implementation of phase one for CSE 408 project 1
 //Needs some cleanup, addition of other color space traversal methods, better error
 // handling, finish parsing command line options, and various other things (see TODO's)
+//TODO: Add flags to change padding/thickness
 package mis.project1;
 
 import java.awt.image.BufferedImage;
@@ -19,65 +20,117 @@ public class Main {
         //Declarations and Initializations (To defaults if no command line args used to override)
         BufferedReader input1;
         BufferedReader input2;
-        String f1 = "Data/sampledata/X/1.csv";
-        String f2 = "Data/sampledata/X/2.csv";
-        String outputfile = "test.bmp";
-        String line;
+        String f1, f2; //input files
+        String outputfile = "RGB.bmp"; //TODO: change default back to output.bmp
         double[][] data1 = new double[20][];
         double[][] data2 = new double[20][];
         double[][] diff = new double[20][];
-        int B = 1;
+        int B = 1; //Beta value
         int maxlength;
         int[] imagedata;
         int width;
         int padding = 20;
         int thickness = 10;
         int height = thickness*20 + 22*padding;
-        int color1 = 0x000000;
-        int color2 = 0xffffff;
+        int color1 = 0xffffff; //lower color
+        int color2 = 0x000000; //upper color
+        double c1a = 0, c1b = 0, c1c = 0; //lower color
+        double c2a = 1, c2b = 1, c2c = 1; //upper color
         BufferedImage output;
         int background = 0xffffff;
+        int colorspace = 0;
+        
+        //getYIQColor(c1a, c1b, c1c, c2a, c2b, c2c, 0);
         
         //Parse command line arguments
         //TODO: Add man page type thing on -h
-        for(int i = 0; i < args.length; i++)
+        for(int i = 0; i < args.length-2; i++)
         {
             switch(args[i])
             {
-                case "-d1":
-                    f1 = args[i+1];
+                //Output file flag
+                case "-o":
+                    outputfile = args[i+1];
                     i++;
                     break;
-                case "-d2":
-                    f2 = args[i+1];
-                    i++;
-                    break;
+                //Beta flag
                 case "-B":
                     B = Integer.parseInt(args[i+1]);
                     i++;
                     break;
+                //Background color toggle flag
                 case "-b":
                     background = 0x000000;
                     break;
+                //Colorspace flag
                 case "-c":
-                    //color space argument, reserved
+                    switch(args[i+1])
+                    {
+                        case "RGB":
+                            colorspace = 0;
+                            break;
+                        case "YUV":
+                            colorspace = 1;
+                            break;
+                        case "YIQ":
+                            colorspace = 2;
+                            break;
+                        case "HSL":
+                            colorspace = 3;
+                            break;
+                        case "XYZ":
+                            colorspace = 4;
+                            break;
+                        case "Lab":
+                            colorspace = 5;
+                            break;
+                        case "YCbCr":
+                            colorspace = 6;
+                            break;
+                        default:
+                            System.err.println("Color space not recognized");
+                            return;
+                    }
                     i++;
                     break;
-                case "-u":
-                    //TODO: Needs to check for validity in input
-                    color1 = Integer.decode(args[i+1]);
-                    i++;
-                    break;
+                //Lower color flag
                 case "-l":
                     //TODO: Needs to check for validity in input
-                    color2 = Integer.decode(args[i+1]);
-                    i++;
+                    if(colorspace == 0)
+                    {
+                        color1 = Integer.decode(args[i+1]);
+                        i++;
+                    }
+                    else
+                    {
+                        c1a = Float.parseFloat(args[i+1]);
+                        c1b = Float.parseFloat(args[i+2]);
+                        c1c = Float.parseFloat(args[i+3]);
+                    }
+                    break;
+                //Upper color flag
+                case "-u":
+                    //TODO: Needs to check for validity in input
+                    if(colorspace == 0)
+                    {
+                        color1 = Integer.decode(args[i+1]);
+                        i++;
+                    }
+                    else
+                    {
+                        c2a = Float.parseFloat(args[i+1]);
+                        c2b = Float.parseFloat(args[i+2]);
+                        c2c = Float.parseFloat(args[i+3]);
+                    }
                     break;
                 default:
-                    System.err.println("Unrecognized argument");
+                    System.err.println("Unrecognized flag");
                     return;
             }
         }
+        //Input files
+        f1 = args[args.length-2];
+        f2 = args[args.length-1];
         
         //Open the two file readers
         try
@@ -94,6 +147,7 @@ public class Main {
         //Read and parse the data for files
         try
         {
+            String line;
             //Executes 20 times (for the given data sets)
             for(int j = 0; j < 20; j++)
             {
@@ -120,7 +174,7 @@ public class Main {
             System.err.println(e);
         }
         
-        //Figure out which data set is longer
+        //Figure out which data set is longer, and store maxlength
         if(data1[0].length > data1[0].length)
             maxlength = data1[0].length;
         else
@@ -156,16 +210,24 @@ public class Main {
             }
         }
         
-        //Convert to RGB values, this is the point that changes for other colorspaces
-        //Call other color space converter instead of convertColor which is RGB
-        //TODO: come up with better method naming scheme
+        //Call appropriate color space traversal function
         int temp[] = new int[maxlength*20];
         for(int j = 0; j < 20; j++)
         {
             for(int i = 0; i < diff[j].length; i++)
             {
-                //TODO: add other colorspace support
-                temp[(maxlength*j)+i] = convertColor(color1, color2, diff[j][i]);
+                //TODO: add other colorspaces
+                switch(colorspace)
+                {
+                    case 0:
+                        temp[(maxlength*j)+i] = getRGBColor(color1, color2, diff[j][i]);
+                        break;
+                    default:
+                        System.err.println("Something broke when choosing color space");
+                        return;
+                }
+                //getYIQColor(c1a, c1b, c1c, c2a, c2b, c2c, diff[j][i]);
+                //getYUVColor(c1a, c1b, c1c, c2a, c2b, c2c, diff[j][i]);
             }
         }
         
@@ -207,7 +269,7 @@ public class Main {
     // another packed integer in RGB (also 8 bits each).
     //Works by drawing a vector between the two points in 3d space and scales using the in value
     // where 0 is the first point and 1 is the second point.
-    public static int convertColor(int c1, int c2, double in)
+    public static int getRGBColor(int c1, int c2, double in)
     {
         int c1r, c1b, c1g;
         int c2r, c2b, c2g;
@@ -232,6 +294,155 @@ public class Main {
         result = (result << 8) | (int) (c1g+in*c12g);
         result = (result << 8) | (int) (c1b+in*c12b); 
         
+        return result;
+    }
+    
+    //Traverses the YUV color space and returns the clamped RGB values
+    //Inputs are normalized floats in the range [0,1]
+    public static int getYUVColor(double c1y, double c1u, double c1v, double c2y, double c2u, double c2v, double in)
+    {
+        //Constants and variables
+        double umax = 0.436;
+        double vmax = 0.615;
+        double c12y, c12u, c12v;
+        double y, u, v;
+        int r, g, b;
+        int result;
+        
+        //Unnormalize
+        c1u = (c1u*2*umax)-umax;
+        c2u = (c2u*2*umax)-umax;
+        c1v = (c1v*2*vmax)-vmax;
+        c2v = (c2v*2*vmax)-vmax;
+        
+
+        //calculate direction vector
+        c12y = c2y-c1y;
+        c12u = c2u-c1u;
+        c12v = c2v-c1v;
+        
+        //scale and convert to RGB
+        y = c1y+in*c12y;
+        u = c1u+in*c12u;
+        v = c1v+in*c12v;
+        
+        r = (int) ((y             + 1.13983*v)*255); //red
+        g = (int) ((y - 0.39465*u - 0.58060*v)*255); //green
+        b = (int) ((y + 2.03211*u            )*255); //blue
+        
+        //Clamp if necessary
+        if(r > 255)
+        {
+            System.err.println("Out of range (clamping value to fit in RGB)");
+            r = 255;
+        }
+        else if(r < 0)
+        {
+            System.err.println("Out of range (clamping value to fit in RGB)");
+            r = 0;
+        }
+        if(g > 255)
+        {
+            System.err.println("Out of range (clamping value to fit in RGB)");
+            g = 255;
+        }
+        else if(g < 0)
+        {
+            System.err.println("Out of range (clamping value to fit in RGB)");
+            g = 0;
+        }
+        if(b > 255)
+        {
+            System.err.println("Out of range (clamping value to fit in RGB)");
+            b = 255;
+        }
+        else if(b < 0)
+        {
+            System.err.println("Out of range (clamping value to fit in RGB)");
+            b = 0;
+        }
+        
+        //repack and return
+        result = r;
+        result = (result << 8) | g;
+        result = (result << 8) | b;
+        return result;
+    }
+
+    //Traverses the YIQ color space and returns the clamped RGB values
+    public static int getYIQColor(double c1y, double c1i, double c1q, double c2y, double c2i, double c2q, double in)
+    {
+        //Constants and variables
+        double imax = 0.5957;
+        double qmax = 0.5226;
+        double c12y, c12i, c12q;
+        double y, i, q;
+        int r, g, b;
+        int result;
+        
+        //Unnormalize
+        c1i = (c1i*2*imax)-imax;
+        c2i = (c2i*2*imax)-imax;
+        c1q = (c1q*2*qmax)-qmax;
+        c2q = (c2q*2*qmax)-qmax;
+        //System.out.println("c1: (" + c1y + "," + c1i + "," + c1q + ")");
+        //System.out.println("c2: (" + c2y + "," + c2i + "," + c2q + ")");
+
+        //calculate direction vector
+        c12y = c2y-c1y;
+        c12i = c2i-c1i;
+        c12q = c2q-c1q;
+        
+        //scale and convert to RGB
+        y = c1y+in*c12y;
+        i = c1i+in*c12i;
+        q = c1q+in*c12q;
+        //System.out.println("scaled: (" + y + "," + i + "," + q + ")");
+        
+        //TODO: Check constants
+        r = (int) ((y + 0.9563*i + 0.6210*q)*255); //red
+        g = (int) ((y - 0.2721*i - 0.6474*q)*255); //green
+        b = (int) ((y - 1.1070*i + 1.7046*q)*255); //blue
+        
+        //System.out.println("rgb: (" + r + "," + g + "," + b + ")");
+        
+        //Clamp if necessary
+        if(r > 255)
+        {
+            System.err.println("Out of range (clamping value to fit in RGB)");
+            r = 255;
+        }
+        else if(r < 0)
+        {
+            System.err.println("Out of range (clamping value to fit in RGB)");
+            r = 0;
+        }
+        if(g > 255)
+        {
+            System.err.println("Out of range (clamping value to fit in RGB)");
+            g = 255;
+        }
+        else if(g < 0)
+        {
+            System.err.println("Out of range (clamping value to fit in RGB)");
+            g = 0;
+        }
+        if(b > 255)
+        {
+            System.err.println("Out of range (clamping value to fit in RGB)");
+            b = 255;
+        }
+        else if(b < 0)
+        {
+            System.err.println("Out of range (clamping value to fit in RGB)");
+            b = 0;
+        }
+        
+        //System.out.println("clamped: (" + r + "," + g + "," + b + ")");
+        //repack and return
+        result = r;
+        result = (result << 8) | g;
+        result = (result << 8) | b;
         return result;
     }
 }
