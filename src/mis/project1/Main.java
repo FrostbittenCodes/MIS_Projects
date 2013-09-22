@@ -21,7 +21,7 @@ public class Main {
         BufferedReader input1;
         BufferedReader input2;
         String f1, f2; //input files
-        String outputfile = "YIQ.bmp"; //TODO: change default back to output.bmp
+        String outputfile = "output.bmp"; //TODO: change default back to output.bmp
         double[][] data1 = new double[20][];
         double[][] data2 = new double[20][];
         double[][] diff = new double[20][];
@@ -96,7 +96,7 @@ public class Main {
                 //Lower color flag
                 case "-l":
                     //TODO: Needs to check for validity in input
-                    if(colorspace == 0)
+                    if(colorspace == 0 || colorspace == 6)
                     {
                         color1 = Integer.decode(args[i+1]);
                         i++;
@@ -106,14 +106,15 @@ public class Main {
                         c1a = Float.parseFloat(args[i+1]);
                         c1b = Float.parseFloat(args[i+2]);
                         c1c = Float.parseFloat(args[i+3]);
+			i+=3;
                     }
                     break;
                 //Upper color flag
                 case "-u":
                     //TODO: Needs to check for validity in input
-                    if(colorspace == 0)
+                    if(colorspace == 0 || colorspace == 6)
                     {
-                        color1 = Integer.decode(args[i+1]);
+                        color2 = Integer.decode(args[i+1]);
                         i++;
                     }
                     else
@@ -121,6 +122,7 @@ public class Main {
                         c2a = Float.parseFloat(args[i+1]);
                         c2b = Float.parseFloat(args[i+2]);
                         c2c = Float.parseFloat(args[i+3]);
+			i+=3;
                     }
                     break;
                 default:
@@ -228,6 +230,20 @@ public class Main {
                     case 2:
                         temp[(maxlength*j)+i] = getYIQColor(c1a, c1b, c1c, c2a, c2b, c2c, diff[j][i]);
                         break;
+
+			//TODO case 3:
+			//
+
+     		    case 4:
+			temp[(maxlength*j)+i] = getXYZColor(c1a, c1b, c1c, c2a, c2b, c2c, diff[j][i]);
+			break;
+
+		    case 6:
+			temp[(maxlength*j)+i] = getYCbCrColor(color1,color2,diff[j][i]);
+			break;
+		    
+		    
+
                     default:
                         System.err.println("Something broke when choosing color space");
                         return;
@@ -281,10 +297,10 @@ public class Main {
         int result;
         
         //unpack components in c1/c2
-        c1g = c1&0x0000ff;
-        c2g = c2&0x0000ff;
-        c1b = (c1>>8)&0x0000ff;
-        c2b = (c2 >> 8)&0x0000ff;
+        c1b = c1&0x0000ff;
+        c2b = c2&0x0000ff;
+        c1g = (c1>>8)&0x0000ff;
+        c2g = (c2 >> 8)&0x0000ff;
         c1r = (c1>>16)&0x0000ff;
         c2r = (c2 >> 16)&0x0000ff;
         
@@ -299,6 +315,43 @@ public class Main {
         result = (result << 8) | (int) (c1b+in*c12b); 
         
         return result;
+    }
+
+    public static int getYCbCrColor(int c1, int c2, double in)
+    {
+	int c1y, c1cb, c1cr;
+	int c2y, c2cb, c2cr;
+	int c12y, c12cb, c12cr;
+	double y, cb, cr;
+	int r, g, b;
+	int result;
+	
+	c1cr = c1&0x0000ff;
+	c2cr = c2&0x0000ff;
+	c1cb = (c1>>8)&0x0000ff;
+	c2cb = (c2>>8)&0x0000ff;
+	c1y = (c1>>16)&0x0000ff;
+	c2y = (c2>>16)&0x0000ff;
+	
+	c12y = c2y-c1y;
+	c12cb = c2cb-c1cb;
+	c12cr = c2cr-c1cr;
+
+	//find point on vector
+	y = c1y+in*c12y;
+	cb = c1cb+in*c12cb;
+	cr = c1cr+in*c12cr;
+
+	r = (int) (y +                    1.402*(cr-128));
+	g = (int) (y - 0.34414*(cb-128) - 0.71414*(cb-128));
+	b = (int) (y + 1.772*(cb-128)                     );
+
+	result = r;
+	result = (result << 8) | g;
+	result = (result << 8) | b;
+
+	return result;
+
     }
     
     //Traverses the YUV color space and returns the clamped RGB values
@@ -448,5 +501,74 @@ public class Main {
         result = (result << 8) | g;
         result = (result << 8) | b;
         return result;
+    }
+
+    public static int getXYZColor(double c1x, double c1y, double c1z, double c2x, double c2y, double c2z, double in)
+    {
+	
+	//Constants/vars
+	double c12x, c12y, c12z;
+	double x, y, z;
+	int r, g, b;
+	int result;
+
+        //Get direction vector between the two 3D XYZ color instance points
+	c12x = c2x - c1x;
+	c12y = c2y - c1y;
+	c12z = c2z - c1z;
+
+	//compute input point along vector between floor and ceiling
+	x = c1x+in*c12x;
+	y = c1y+in*c12y;
+	z = c1z+in*c12z;
+
+	//convert to RGB with inverted transform
+	r = (int) ((3.50645*x - 1.74019*y -0.543868*z)*255);
+	g = (int) ((-1.06926*x + 1.97786*y + 0.0350523*z)*255);
+	b = (int) ((0.0564385*x - 0.197016*y + 1.05014*z)*255);
+
+	//Clamp if necessary
+
+        //Clamp if necessary                                                                                                                                
+        if(r > 255)
+	    {
+		System.err.println("Out of range (clamping value to fit in RGB)");
+		r = 255;
+	    }
+        else if(r < 0)
+	    {
+		System.err.println("Out of range (clamping value to fit in RGB)");
+		r = 0;
+	    }
+        if(g > 255)
+	    {
+		System.err.println("Out of range (clamping value to fit in RGB)");
+		g = 255;
+	    }
+        else if(g < 0)
+	    {
+		System.err.println("Out of range (clamping value to fit in RGB)");
+		g = 0;
+	    }
+        if(b > 255)
+	    {
+		System.err.println("Out of range (clamping value to fit in RGB)");
+		b = 255;
+	    }
+        else if(b < 0)
+	    {
+		System.err.println("Out of range (clamping value to fit in RGB)");
+		b = 0;
+	    }
+
+
+	//System.out.println("clamped: (" + r + "," + g + "," + b + ")");                                                                                   
+        //repack and return                                                                                                                                 
+        result = r;
+        result = (result << 8) | g;
+        result = (result << 8) | b;
+        return result;
+
+
     }
 }
