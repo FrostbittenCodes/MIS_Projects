@@ -112,7 +112,7 @@ public class Main {
                 //Upper color flag
                 case "-u":
                     //TODO: Needs to check for validity in input
-                    if(colorspace == 0 || colorspace == 6)
+                    if(colorspace == 0)
                     {
                         color2 = Integer.decode(args[i+1]);
                         i++;
@@ -297,10 +297,10 @@ public class Main {
         int result;
         
         //unpack components in c1/c2
-        c1b = c1&0x0000ff;
-        c2b = c2&0x0000ff;
-        c1g = (c1>>8)&0x0000ff;
-        c2g = (c2 >> 8)&0x0000ff;
+        c1g = c1&0x0000ff;
+        c2g = c2&0x0000ff;
+        c1b = (c1>>8)&0x0000ff;
+        c2b = (c2 >> 8)&0x0000ff;
         c1r = (c1>>16)&0x0000ff;
         c2r = (c2 >> 16)&0x0000ff;
         
