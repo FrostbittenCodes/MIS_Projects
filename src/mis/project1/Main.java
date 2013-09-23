@@ -34,7 +34,7 @@ public class Main {
         int color1 = 0xffffff; //lower color
         int color2 = 0x000000; //upper color
         double c1a = 0, c1b = 0, c1c = 0; //lower color
-        double c2a = 1, c2b = 1, c2c = 1; //upper color
+        double c2a = 50, c2b = 500, c2c = -200; //upper color
         BufferedImage output;
         int background = 0xffffff;
         int colorspace = 0;
@@ -692,8 +692,6 @@ public class Main {
         c1l *= 100;
         c2l *= 100;
 
-        System.out.println("Lab1:(" + c1l + "," + c1a + "," + c1b + ")");
-        System.out.println("Lab2:(" + c2l + "," + c2a + "," + c2b + ")");
         
         //Get direction vector between the two color instance points
 	c12l = c2l - c1l;
@@ -704,8 +702,6 @@ public class Main {
 	l = c1l+in*c12l;
 	a = c1a+in*c12a;
 	b2 = c1b+in*c12b;
-        
-        System.out.println("Scaled:(" + l + "," + a + "," + b2 + ")");
 
         //Convert to XYZ
         y = (l + 16)/116;
@@ -725,14 +721,11 @@ public class Main {
         else
             z = (z - 16/116)/(7.787);
         
-        System.out.println("xyz:(" + x + "," + y + "," + z + ")");
         
 	//convert to RGB from XYZ with inverted transform
 	r = (int) ((2.3706743*x - 0.9000405*y - 0.4706338*z)*255);
 	g = (int) ((-0.5138850*x + 1.4253036*y + 0.0885814*z)*255);
 	b = (int) ((0.0052982*x - 0.0146949*y + 1.0093968*z)*255);
-
-        System.out.println("rgb:(" + r + "," + g + "," + b + ")");
         
         //Clamp if necessary                                                                                                                                
         if(r > 255)
@@ -765,8 +758,6 @@ public class Main {
 		System.err.println("Out of range (clamping value to fit in RGB)");
 		b = 0;
 	    }
-        
-        System.out.println("clamped:(" + r + "," + g + "," + b + ")");
                                                                              
         //repack and return                                                                                                                                 
         result = r;
