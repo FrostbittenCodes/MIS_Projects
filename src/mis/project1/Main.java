@@ -21,7 +21,7 @@ public class Main {
         BufferedReader input1;
         BufferedReader input2;
         String f1, f2; //input files
-        String outputfile = "output.bmp"; //TODO: change default back to output.bmp
+        String outputfile = "output.bmp";
         double[][] data1 = new double[20][];
         double[][] data2 = new double[20][];
         double[][] diff = new double[20][];
@@ -39,8 +39,7 @@ public class Main {
         BufferedImage output;
         int background = 0xffffff;
         int colorspace = 0;
-        
-        //getYIQColor(c1a, c1b, c1c, c2a, c2b, c2c, 0);
+
         
         //Parse command line arguments
         //TODO: Add man page type thing on -h
@@ -231,18 +230,19 @@ public class Main {
                         temp[(maxlength*j)+i] = getYIQColor(c1a, c1b, c1c, c2a, c2b, c2c, diff[j][i]);
                         break;
 
-			//TODO case 3:
-			//
+                    //TODO case 3:
+                    //
 
      		    case 4:
 			temp[(maxlength*j)+i] = getXYZColor(c1a, c1b, c1c, c2a, c2b, c2c, diff[j][i]);
 			break;
+                        
+                    //TODO case 5:
+                    //
 
 		    case 6:
 			temp[(maxlength*j)+i] = getYCbCrColor(color1,color2,diff[j][i]);
 			break;
-		    
-		    
 
                     default:
                         System.err.println("Something broke when choosing color space");
@@ -351,7 +351,6 @@ public class Main {
 	result = (result << 8) | b;
 
 	return result;
-
     }
     
     //Traverses the YUV color space and returns the clamped RGB values
