@@ -2,7 +2,7 @@ NAME
     MIS_Project_1 - Allows users to visualize differences in data sets
 
 SYNOPSIS
-    java -jar MIS_Project_1.jar -c <cSpace> [options] <infile 1> <infile 2>
+    java Main -c <cSpace> [options] <infile 1> <infile 2>
 
 DESCRIPTION
     Reads the data sets from two 20 line csv files, calculates the differences, and allows users
@@ -52,17 +52,17 @@ DEPENDENCIES
     JVM 7.0+
 
 EXAMPLES
-    java -jar MIS_Project_1.jar -c Lab -b -o LabOutput.bmp Data/sampledata/X/1.csv Data/sampledata/X/2.csv
+    java Main -c Lab -b -o LabOutput.bmp Data/sampledata/X/1.csv Data/sampledata/X/2.csv
         Outputs the data to a file named LabOutput.bmp, traversing in Lab color space, has a black background instead
             of white for the output bitmap.
 
-    java -jar MIS_Project_1.jar -c XYZ -l 0.5 0.1 0.3 -u 0.2 0.8 0.63 Data/sampledata/X/1.csv Data/sampledata/X/2.csv
+    java Main -c XYZ -l 0.5 0.1 0.3 -u 0.2 0.8 0.63 Data/sampledata/X/1.csv Data/sampledata/X/2.csv
         Outputs the data to a file named output.bmp, traversing in Lab color space using [0.5, 0.1, 0.3] as the lower color
             and [0.2, 0.8, 0.63] as the upper color.
 
 COMPILATION
     Compiles using the following command:
-        
+        javac Main.java
 
 AUTHORS
     Steven Brown
