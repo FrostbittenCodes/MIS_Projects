@@ -2,7 +2,6 @@
 //Quick and dirty java implementation of phase one for CSE 408 project 1
 //Needs some cleanup, addition of other color space traversal methods, better error
 // handling, finish parsing command line options, and various other things (see TODO's)
-package mis.project1;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;

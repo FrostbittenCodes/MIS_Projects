@@ -60,6 +60,10 @@ EXAMPLES
         Outputs the data to a file named output.bmp, traversing in Lab color space using [0.5, 0.1, 0.3] as the lower color
             and [0.2, 0.8, 0.63] as the upper color.
 
+COMPILATION
+    Compiles using the following command:
+        
+
 AUTHORS
     Steven Brown
     Kyle St. Leger-Barter
