@@ -52,6 +52,18 @@ public class Main {
                     outputfile = args[i+1];
                     i++;
                     break;
+                //Thickness flag
+                //TODO: check input validity
+                case "-t":
+                    thickness = Integer.parseInt(args[i+1]);
+                    i++;
+                    break;
+                //Padding flag
+                //TODO: check input validity
+                case "-p":
+                    padding = Integer.parseInt(args[i+1]);
+                    i++;
+                    break;
                 //Beta flag
                 case "-B":
                     B = Integer.parseInt(args[i+1]);

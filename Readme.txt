@@ -20,12 +20,16 @@ OPTIONS
 
     -o <outputfile> Sets the file to write the bitmap image output
 
+    -t <i> Sets the number of pixels for line thickness to the integer i (default 10)
+
+    -p <i> Sets the number of pixels for the padding thickness to the integer i (default 20)
+
     -b Toggles the background from white (default) to black
 
-    -u <i> Sets the upper color (biggest difference) to the packed integer i (RGB only) range is [0x000000, 0xffffff]
+    -u <i> Sets the upper color (biggest difference) to the packed integer i (RGB and YCbCr only) range is [0x000000, 0xffffff]
                 Defaults to 0x000000
 
-    -l <i> Sets the lower color (smallest difference) to the packed integer i (RGB only) range is [0x000000, 0xffffff]
+    -l <i> Sets the lower color (smallest difference) to the packed integer i (RGB and YCbCr only) range is [0x000000, 0xffffff]
                 Defaults to 0xffffff
 
     -u <f1> <f2> <f3> Sets the upper color to the three normalized color components (e.g. XYZ or YUV) range is [0,1]
@@ -42,3 +46,5 @@ EXAMPLES
 
 AUTHORS
     Steven Brown
+    Kyle St. Leger-Barter
+    
