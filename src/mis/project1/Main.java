@@ -21,7 +21,7 @@ public class Main {
         BufferedReader input1;
         BufferedReader input2;
         String f1, f2; //input files
-        String outputfile = "YIQ.bmp"; //TODO: change default back to output.bmp
+        String outputfile = "output.bmp";
         double[][] data1 = new double[20][];
         double[][] data2 = new double[20][];
         double[][] diff = new double[20][];
@@ -35,12 +35,11 @@ public class Main {
         int color1 = 0xffffff; //lower color
         int color2 = 0x000000; //upper color
         double c1a = 0, c1b = 0, c1c = 0; //lower color
-        double c2a = 1, c2b = 1, c2c = 1; //upper color
+        double c2a = 1, c2b = 0, c2c = 1; //upper color
         BufferedImage output;
         int background = 0xffffff;
         int colorspace = 0;
         
-        //getYIQColor(c1a, c1b, c1c, c2a, c2b, c2c, 0);
         
         //Parse command line arguments
         //TODO: Add man page type thing on -h
@@ -389,8 +388,6 @@ public class Main {
         c2i = (c2i*2*imax)-imax;
         c1q = (c1q*2*qmax)-qmax;
         c2q = (c2q*2*qmax)-qmax;
-        //System.out.println("c1: (" + c1y + "," + c1i + "," + c1q + ")");
-        //System.out.println("c2: (" + c2y + "," + c2i + "," + c2q + ")");
 
         //calculate direction vector
         c12y = c2y-c1y;
@@ -401,14 +398,10 @@ public class Main {
         y = c1y+in*c12y;
         i = c1i+in*c12i;
         q = c1q+in*c12q;
-        //System.out.println("scaled: (" + y + "," + i + "," + q + ")");
         
-        //TODO: Check constants
-        r = (int) ((y + 0.9563*i + 0.6210*q)*255); //red
-        g = (int) ((y - 0.2721*i - 0.6474*q)*255); //green
-        b = (int) ((y - 1.1070*i + 1.7046*q)*255); //blue
-        
-        //System.out.println("rgb: (" + r + "," + g + "," + b + ")");
+        r = (int) ((y + 0.988475*i + 0.571479*q)*255); //red
+        g = (int) ((y - 0.240382*i - 0.696258*q)*255); //green
+        b = (int) ((y - 1.107257*i + 1.65161*q)*255); //blue
         
         //Clamp if necessary
         if(r > 255)
@@ -442,7 +435,6 @@ public class Main {
             b = 0;
         }
         
-        //System.out.println("clamped: (" + r + "," + g + "," + b + ")");
         //repack and return
         result = r;
         result = (result << 8) | g;
