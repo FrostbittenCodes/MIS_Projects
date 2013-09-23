@@ -582,9 +582,6 @@ public class Main {
         //Unnormalize
         c1h = (c1h*hmax);
         c2h = (c2h*hmax);
-        
-        System.out.println("hsl1:(" + c1h + "," + c1s + "," + c1l + ")");
-        System.out.println("hsl2:(" + c2h + "," + c2s + "," + c2l + ")");
 
         //calculate direction vector
         c12h = c2h-c1h;
@@ -595,8 +592,6 @@ public class Main {
         h = c1h+in*c12h;
         s = c1s+in*c12s;
         l = c1l+in*c12l;
-        
-        System.out.println("scaled:(" + h + "," + s + "," + l + ")");
         
         c = (1-Math.abs(2*l-1))*s;
         x = c*(1-Math.abs(((h/60)%2)-1));
@@ -680,8 +675,6 @@ public class Main {
             System.err.println("Out of range (clamping value to fit in RGB)");
             b = 0;
         }
-        
-        System.out.println("rgb:(" + (int)(r) + "," + (int)(g) + "," + (int)(b) + ")");
         
         //repack and return                                                                                                                                 
         result = (int) (r);
