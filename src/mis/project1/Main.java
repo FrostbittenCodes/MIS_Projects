@@ -122,10 +122,14 @@ public class Main {
                     break;
                 //Lower color flag
                 case "-l":
-                    //TODO: Needs to check for validity in input
                     if(colorspace == 0 || colorspace == 6)
                     {
                         color1 = Integer.decode(args[i+1]);
+                        if(color1 < 0 || color1 > 16777215)
+                        {
+                            System.err.println("Invalid lower (-l) color input.");
+                            return;
+                        }
                         i++;
                     }
                     else
@@ -138,10 +142,14 @@ public class Main {
                     break;
                 //Upper color flag
                 case "-u":
-                    //TODO: Needs to check for validity in input
                     if(colorspace == 0 || colorspace == 6)
                     {
                         color2 = Integer.decode(args[i+1]);
+                        if(color2 < 0 || color2 > 16777215)
+                        {
+                            System.err.println("Invalid upper (-u) color input.");
+                            return;
+                        }
                         i++;
                     }
                     else

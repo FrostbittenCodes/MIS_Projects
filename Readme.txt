@@ -9,7 +9,7 @@ DESCRIPTION
     to visualize them using different colors in different color spaces by outputting the data to a bmp file.
 
 OPTIONS
-    -h -? (Not implemented) Shows the help dialogue.
+    -h Shows the help dialogue.
 
     -c <cSpace> Must be the first argument.
                 Sets the color space to string cSpace, valid options are as follows:
@@ -52,7 +52,13 @@ DEPENDENCIES
     JVM 7.0+
 
 EXAMPLES
-    <Example here>
+    java -jar MIS_Project_1.jar -c Lab -b -o LabOutput.bmp Data/sampledata/X/1.csv Data/sampledata/X/2.csv
+        Outputs the data to a file named LabOutput.bmp, traversing in Lab color space, has a black background instead
+            of white for the output bitmap.
+
+    java -jar MIS_Project_1.jar -c XYZ -l 0.5 0.1 0.3 -u 0.2 0.8 0.63 Data/sampledata/X/1.csv Data/sampledata/X/2.csv
+        Outputs the data to a file named output.bmp, traversing in Lab color space using [0.5, 0.1, 0.3] as the lower color
+            and [0.2, 0.8, 0.63] as the upper color.
 
 AUTHORS
     Steven Brown
