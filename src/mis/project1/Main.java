@@ -41,26 +41,37 @@ public class Main {
         
         
         //Parse command line arguments
-        //TODO: Add man page type thing on -h
         for(int i = 0; i < args.length-2; i++)
         {
             switch(args[i])
             {
+                //Help flag
+                case"-h":
+                    System.out.println("Usage: java -jar MIS_Project_1.jar -c <cSpace> [options] <infile 1> <infile 2>\nSee readme for options.");
+                    return;
                 //Output file flag
                 case "-o":
                     outputfile = args[i+1];
                     i++;
                     break;
                 //Thickness flag
-                //TODO: check input validity
                 case "-t":
                     thickness = Integer.parseInt(args[i+1]);
+                    if(thickness <= 0)
+                    {
+                        System.err.println("Invalid thickness (-t) value");
+                        return;
+                    }
                     i++;
                     break;
                 //Padding flag
-                //TODO: check input validity
                 case "-p":
                     padding = Integer.parseInt(args[i+1]);
+                    if(padding <= 0)
+                    {
+                        System.err.println("Invalid padding (-p) value");
+                        return;
+                    }
                     i++;
                     break;
                 //Beta flag
@@ -234,7 +245,6 @@ public class Main {
         {
             for(int i = 0; i < diff[j].length; i++)
             {
-                //TODO: add other colorspaces
                 switch(colorspace)
                 {
                     case 0:
