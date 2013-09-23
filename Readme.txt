@@ -26,12 +26,22 @@ OPTIONS
 
     -b Toggles the background from white (default) to black
 
+
+RGB AND YCbCr COLOR SPACE OPTIONS
     -u <i> Sets the upper color (biggest difference) to the packed integer i (RGB and YCbCr only) range is [0x000000, 0xffffff]
                 Defaults to 0x000000
 
     -l <i> Sets the lower color (smallest difference) to the packed integer i (RGB and YCbCr only) range is [0x000000, 0xffffff]
                 Defaults to 0xffffff
 
+LAB COLOR SPACE OPTIONS
+    -u <i> Sets the upper color (biggest difference) to the packed integer i (RGB and YCbCr only) range is [0x000000, 0xffffff]
+                Defaults to 50, 50, 84
+
+    -l <i> Sets the lower color (smallest difference) to the packed integer i (RGB and YCbCr only) range is [0x000000, 0xffffff]
+                Defaults to 50, 90, 10
+
+OTHER COLOR SPACE OPTIONS
     -u <f1> <f2> <f3> Sets the upper color to the three normalized color components (e.g. XYZ or YUV) range is [0,1]
                 Defaults to 0.0, 0.0, 0.0
 

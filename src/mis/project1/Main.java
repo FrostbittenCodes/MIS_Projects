@@ -34,7 +34,7 @@ public class Main {
         int color1 = 0xffffff; //lower color
         int color2 = 0x000000; //upper color
         double c1a = 0, c1b = 0, c1c = 0; //lower color
-        double c2a = 50, c2b = 500, c2c = -200; //upper color
+        double c2a = 1, c2b = 1, c2c = 1; //upper color
         BufferedImage output;
         int background = 0xffffff;
         int colorspace = 0;
@@ -93,6 +93,12 @@ public class Main {
                             break;
                         case "Lab":
                             colorspace = 5;
+                            c1a = 0.5;
+                            c1b = 90;
+                            c1c = 0;
+                            c2a = 0.5;
+                            c2b = 0;
+                            c2c = 84;
                             break;
                         case "YCbCr":
                             colorspace = 6;
