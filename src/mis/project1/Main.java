@@ -2,7 +2,6 @@
 //Quick and dirty java implementation of phase one for CSE 408 project 1
 //Needs some cleanup, addition of other color space traversal methods, better error
 // handling, finish parsing command line options, and various other things (see TODO's)
-//TODO: Add flags to change padding/thickness
 package mis.project1;
 
 import java.awt.image.BufferedImage;
@@ -40,6 +39,9 @@ public class Main {
         int background = 0xffffff;
         int colorspace = 0;
 
+        
+        //getHSLColor(c1a, c1b, c1c, c2a, c2b, c2c, 0.25626);
+        
         
         //Parse command line arguments
         //TODO: Add man page type thing on -h
@@ -241,10 +243,9 @@ public class Main {
                     case 2:
                         temp[(maxlength*j)+i] = getYIQColor(c1a, c1b, c1c, c2a, c2b, c2c, diff[j][i]);
                         break;
-
-                    //TODO case 3:
-                    //
-
+                    case 3:
+                        temp[(maxlength*j)+i] = getHSLColor(c1a, c1b, c1c, c2a, c2b, c2c, diff[j][i]);
+                        break;
      		    case 4:
 			temp[(maxlength*j)+i] = getXYZColor(c1a, c1b, c1c, c2a, c2b, c2c, diff[j][i]);
 			break;
@@ -566,6 +567,126 @@ public class Main {
         result = r;
         result = (result << 8) | g;
         result = (result << 8) | b;
+        return result;
+    }
+    
+    public static int getHSLColor(double c1h, double c1s, double c1l, double c2h, double c2s, double c2l, double in)
+    {
+        double r, g, b;
+        double h, s, l;
+        int result;
+        double c, x, m;
+        double c12h, c12s, c12l;
+        double hmax = 360;
+        
+        //Unnormalize
+        c1h = (c1h*hmax);
+        c2h = (c2h*hmax);
+        
+        System.out.println("hsl1:(" + c1h + "," + c1s + "," + c1l + ")");
+        System.out.println("hsl2:(" + c2h + "," + c2s + "," + c2l + ")");
+
+        //calculate direction vector
+        c12h = c2h-c1h;
+        c12s = c2s-c1s;
+        c12l = c2l-c1l;
+        
+        //scale and convert to RGB
+        h = c1h+in*c12h;
+        s = c1s+in*c12s;
+        l = c1l+in*c12l;
+        
+        System.out.println("scaled:(" + h + "," + s + "," + l + ")");
+        
+        c = (1-Math.abs(2*l-1))*s;
+        x = c*(1-Math.abs(((h/60)%2)-1));
+        m = l - c/2;
+        
+        if(h < 60 && h >= 0)
+        {
+            r = c;
+            g = x;
+            b = 0;
+        }
+        else if(h < 120 && h >= 60)
+        {
+            r = x;
+            g = c;
+            b = 0;
+        }
+        else if(h < 180 && h >= 120)
+        {
+            r = 0;
+            g = c;
+            b = x;
+        }
+        else if(h < 240 && h >= 180)
+        {
+            r = 0;
+            g = x;
+            b = c;
+        }
+        else if(h < 300 && h >= 240)
+        {
+            r = x;
+            g = 0;
+            b = c;
+        }
+        else if(h <= 360 && h >= 300)
+        {
+            r = c;
+            g = 0;
+            b = x;
+        }
+        else
+        {
+            System.err.println("Error occurred with HSL input.");
+            return -1;
+        }
+        
+        r = (r + m)*255;
+        g = (g + m)*255;
+        b = (b + m)*255;
+        
+        
+        //Clamp if necessary                                                                                                                                
+        if(r > 255)
+        {
+            System.err.println("Out of range (clamping value to fit in RGB)");
+            r = 255;
+        }
+        else if(r < 0)
+        {
+            System.err.println("Out of range (clamping value to fit in RGB)");
+            r = 0;
+        }
+        if(g > 255)
+        {
+            System.err.println("Out of range (clamping value to fit in RGB)");
+            g = 255;
+        }
+        else if(g < 0)
+        {
+            System.err.println("Out of range (clamping value to fit in RGB)");
+            g = 0;
+        }
+        if(b > 255)
+        {
+            System.err.println("Out of range (clamping value to fit in RGB)");
+            b = 255;
+        }
+        else if(b < 0)
+        {
+            System.err.println("Out of range (clamping value to fit in RGB)");
+            b = 0;
+        }
+        
+        System.out.println("rgb:(" + (int)(r) + "," + (int)(g) + "," + (int)(b) + ")");
+        
+        //repack and return                                                                                                                                 
+        result = (int) (r);
+        result = (result << 8) | (int)(g);
+        result = (result << 8) | (int)(b);
         return result;
     }
 }
