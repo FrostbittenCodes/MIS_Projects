@@ -38,9 +38,6 @@ public class Main {
         BufferedImage output;
         int background = 0xffffff;
         int colorspace = 0;
-
-        
-        //getHSLColor(c1a, c1b, c1c, c2a, c2b, c2c, 0.25626);
         
         
         //Parse command line arguments
@@ -249,10 +246,9 @@ public class Main {
      		    case 4:
 			temp[(maxlength*j)+i] = getXYZColor(c1a, c1b, c1c, c2a, c2b, c2c, diff[j][i]);
 			break;
-                        
-                    //TODO case 5:
-                    //
-
+                    case 5:
+			temp[(maxlength*j)+i] = getLabColor(c1a, c1b, c1c, c2a, c2b, c2c, diff[j][i]);
+			break;
 		    case 6:
 			temp[(maxlength*j)+i] = getYCbCrColor(color1,color2,diff[j][i]);
 			break;
@@ -680,6 +676,102 @@ public class Main {
         result = (int) (r);
         result = (result << 8) | (int)(g);
         result = (result << 8) | (int)(b);
+        return result;
+    }
+    
+    public static int getLabColor(double c1l, double c1a, double c1b, double c2l, double c2a, double c2b, double in)
+    {
+	//Constants/vars
+	double c12l, c12a, c12b;
+	double l, a, b2;
+        double x, y, z;
+	int r, g, b;
+	int result;
+        
+        //Unnormalize
+        c1l *= 100;
+        c2l *= 100;
+
+        System.out.println("Lab1:(" + c1l + "," + c1a + "," + c1b + ")");
+        System.out.println("Lab2:(" + c2l + "," + c2a + "," + c2b + ")");
+        
+        //Get direction vector between the two color instance points
+	c12l = c2l - c1l;
+	c12a = c2a - c1a;
+	c12b = c2b - c1b;
+
+	//scale
+	l = c1l+in*c12l;
+	a = c1a+in*c12a;
+	b2 = c1b+in*c12b;
+        
+        System.out.println("Scaled:(" + l + "," + a + "," + b2 + ")");
+
+        //Convert to XYZ
+        y = (l + 16)/116;
+        x = y + a/500;
+        z = y - b2/200;
+        
+        if(x > 0.2068965517241379)
+            x = Math.pow(x,3);
+        else
+            x = (x - 16/116)/(7.787);
+        if(y > 0.2068965517241379)
+            y = Math.pow(y,3);
+        else
+            y = (y - 16/116)/(7.787);
+        if(z > 0.2068965517241379)
+            z = Math.pow(z,3);
+        else
+            z = (z - 16/116)/(7.787);
+        
+        System.out.println("xyz:(" + x + "," + y + "," + z + ")");
+        
+	//convert to RGB from XYZ with inverted transform
+	r = (int) ((2.3706743*x - 0.9000405*y - 0.4706338*z)*255);
+	g = (int) ((-0.5138850*x + 1.4253036*y + 0.0885814*z)*255);
+	b = (int) ((0.0052982*x - 0.0146949*y + 1.0093968*z)*255);
+
+        System.out.println("rgb:(" + r + "," + g + "," + b + ")");
+        
+        //Clamp if necessary                                                                                                                                
+        if(r > 255)
+	    {
+		System.err.println("Out of range (clamping value to fit in RGB)");
+		r = 255;
+	    }
+        else if(r < 0)
+	    {
+		System.err.println("Out of range (clamping value to fit in RGB)");
+		r = 0;
+	    }
+        if(g > 255)
+	    {
+		System.err.println("Out of range (clamping value to fit in RGB)");
+		g = 255;
+	    }
+        else if(g < 0)
+	    {
+		System.err.println("Out of range (clamping value to fit in RGB)");
+		g = 0;
+	    }
+        if(b > 255)
+	    {
+		System.err.println("Out of range (clamping value to fit in RGB)");
+		b = 255;
+	    }
+        else if(b < 0)
+	    {
+		System.err.println("Out of range (clamping value to fit in RGB)");
+		b = 0;
+	    }
+        
+        System.out.println("clamped:(" + r + "," + g + "," + b + ")");
+                                                                             
+        //repack and return                                                                                                                                 
+        result = r;
+        result = (result << 8) | g;
+        result = (result << 8) | b;
         return result;
     }
 }
