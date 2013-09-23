@@ -45,7 +45,7 @@ OTHER COLOR SPACE OPTIONS
     -u <f1> <f2> <f3> Sets the upper color to the three normalized color components (e.g. XYZ or YUV) range is [0,1]
                 Defaults to 0.0, 0.0, 0.0
 
-    -l <f1> <f2> <f3> Sets the upper color to the three normalized color components (e.g. XYZ or YUV) range is [0,1]
+    -l <f1> <f2> <f3> Sets the lower color to the three normalized color components (e.g. XYZ or YUV) range is [0,1]
                 Defaults to 1.0, 1.0, 1.0
 
 DEPENDENCIES
