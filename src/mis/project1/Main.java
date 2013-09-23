@@ -442,8 +442,6 @@ public class Main {
         c2i = (c2i*2*imax)-imax;
         c1q = (c1q*2*qmax)-qmax;
         c2q = (c2q*2*qmax)-qmax;
-        //System.out.println("c1: (" + c1y + "," + c1i + "," + c1q + ")");
-        //System.out.println("c2: (" + c2y + "," + c2i + "," + c2q + ")");
 
         //calculate direction vector
         c12y = c2y-c1y;
@@ -454,14 +452,10 @@ public class Main {
         y = c1y+in*c12y;
         i = c1i+in*c12i;
         q = c1q+in*c12q;
-        //System.out.println("scaled: (" + y + "," + i + "," + q + ")");
         
-        //TODO: Check constants
         r = (int) ((y + 0.9563*i + 0.6210*q)*255); //red
         g = (int) ((y - 0.2721*i - 0.6474*q)*255); //green
         b = (int) ((y - 1.1070*i + 1.7046*q)*255); //blue
-        
-        //System.out.println("rgb: (" + r + "," + g + "," + b + ")");
         
         //Clamp if necessary
         if(r > 255)
@@ -495,7 +489,6 @@ public class Main {
             b = 0;
         }
         
-        //System.out.println("clamped: (" + r + "," + g + "," + b + ")");
         //repack and return
         result = r;
         result = (result << 8) | g;
@@ -505,7 +498,6 @@ public class Main {
 
     public static int getXYZColor(double c1x, double c1y, double c1z, double c2x, double c2y, double c2z, double in)
     {
-	
 	//Constants/vars
 	double c12x, c12y, c12z;
 	double x, y, z;
@@ -526,8 +518,6 @@ public class Main {
 	r = (int) ((3.50645*x - 1.74019*y -0.543868*z)*255);
 	g = (int) ((-1.06926*x + 1.97786*y + 0.0350523*z)*255);
 	b = (int) ((0.0564385*x - 0.197016*y + 1.05014*z)*255);
-
-	//Clamp if necessary
 
         //Clamp if necessary                                                                                                                                
         if(r > 255)
@@ -560,15 +550,11 @@ public class Main {
 		System.err.println("Out of range (clamping value to fit in RGB)");
 		b = 0;
 	    }
-
-
-	//System.out.println("clamped: (" + r + "," + g + "," + b + ")");                                                                                   
+                                                                             
         //repack and return                                                                                                                                 
         result = r;
         result = (result << 8) | g;
         result = (result << 8) | b;
         return result;
-
-
     }
 }
